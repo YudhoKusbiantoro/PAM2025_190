@@ -2,18 +2,27 @@
 package com.example.inventarislab.view
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.inventarislab.R
 import com.example.inventarislab.modeldata.Lab
 import com.example.inventarislab.viewmodel.RegisterViewModel
 
@@ -44,16 +53,6 @@ fun HalamanRegister(navController: NavController) {
         }
     }
 
-    // ✅ SET DEFAULT LAB SAAT DATA DIMUAT
-    LaunchedEffect(labs) {
-        if (!isRoleAdmin && labs.isNotEmpty()) {
-            // Jangan set default lab — biarkan kosong sampai user klik
-            if (selectedLab == null) {
-                // ✅ Biarkan kosong — tidak set apapun
-            }
-        }
-    }
-
     // ✅ RESET SELECTED LAB SAAT GANTI KE ADMIN
     LaunchedEffect(isRoleAdmin) {
         if (isRoleAdmin) {
@@ -62,11 +61,10 @@ fun HalamanRegister(navController: NavController) {
     }
 
     LaunchedEffect(registerResult) {
-        val result = registerResult // ✅ Simpan ke variabel lokal
+        val result = registerResult
         if (result != null) {
             isRegistering = false
-
-            if (result.status == "success") { // ✅ Sekarang aman
+            if (result.status == "success") {
                 Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
                 navController.navigate("login")
             } else {
@@ -76,159 +74,221 @@ fun HalamanRegister(navController: NavController) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
     ) {
-        Text(
-            text = "Pendaftaran Akun",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 32.dp)
+                .padding(top = 30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Button(
-                onClick = { isRoleAdmin = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isRoleAdmin) Color(0xFF485C91) else MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
-            ) {
-                Text("Admin", color = Color.White)
-            }
-            Button(
-                onClick = { isRoleAdmin = false },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (!isRoleAdmin) Color(0xFF485C91) else MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            ) {
-                Text("Pengguna", color = Color.White)
-            }
-        }
+            Spacer(modifier = Modifier.height(60.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = nama,
-            onValueChange = { nama = it },
-            label = { Text("Nama Lengkap") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-
-        if (isRoleAdmin) {
-            OutlinedTextField(
-                value = institusi,
-                onValueChange = { institusi = it },
-                label = { Text("Nama Instansi/Sekolah") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            // LOGO KIMIA DI ATAS TENGAH
+            Image(
+                painter = painterResource(id = R.drawable.kimia1), // Ganti jika perlu
+                contentDescription = "Logo Kimia",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(MaterialTheme.shapes.medium)
             )
-            OutlinedTextField(
-                value = namaLab,
-                onValueChange = { namaLab = it },
-                label = { Text("Nama Laboratorium") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Buat Akun Baru",
+                fontSize = 30.sp, // 📏 Sedikit lebih besar
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF485C91),
+                modifier = Modifier.padding(bottom = 8.dp)
             )
-        } else {
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+
+            Text(
+                text = "Silakan isi data untuk mendaftar",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // PILIHAN ROLE: ADMIN / PENGGUNA
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                OutlinedTextField(
-                    value = selectedLab?.let { "${it.institusi} - ${it.nama_lab}" } ?: "Pilih Laboratorium",
-                    onValueChange = {},
-                    label = { Text("Laboratorium") },
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                        .padding(bottom = 8.dp)
+                RoleChip(
+                    text = "Admin",
+                    isSelected = isRoleAdmin,
+                    onClick = { isRoleAdmin = true },
+                    selectedColor = Color(0xFF485C91),
+                    unselectedColor = Color(0xFFF0F4F8)
                 )
+                Spacer(modifier = Modifier.width(12.dp))
+                RoleChip(
+                    text = "Pengguna",
+                    isSelected = !isRoleAdmin,
+                    onClick = { isRoleAdmin = false },
+                    selectedColor = Color(0xFF485C91),
+                    unselectedColor = Color(0xFFF0F4F8)
+                )
+            }
 
-                ExposedDropdownMenu(
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // FORM INPUT
+            OutlinedTextField(
+                value = nama,
+                onValueChange = { nama = it },
+                label = { Text("Nama Lengkap") },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            )
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            )
+
+            if (isRoleAdmin) {
+                OutlinedTextField(
+                    value = institusi,
+                    onValueChange = { institusi = it },
+                    label = { Text("Nama Instansi/Sekolah") },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                )
+                OutlinedTextField(
+                    value = namaLab,
+                    onValueChange = { namaLab = it },
+                    label = { Text("Nama Laboratorium") },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                )
+            } else {
+                ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onExpandedChange = { expanded = !expanded }
                 ) {
-                    labs.forEach { lab ->
-                        DropdownMenuItem(
-                            text = { Text("${lab.institusi} - ${lab.nama_lab}") },
-                            onClick = {
-                                selectedLab = lab
-                                expanded = false
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    OutlinedTextField(
+                        value = selectedLab?.let { "${it.institusi} - ${it.nama_lab}" } ?: "",
+                        onValueChange = {},
+                        label = { Text("Pilih Laboratorium") },
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                            .padding(vertical = 4.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        labs.forEach { lab ->
+                            DropdownMenuItem(
+                                text = { Text("${lab.institusi} - ${lab.nama_lab}") },
+                                onClick = {
+                                    selectedLab = lab
+                                    expanded = false
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        Button(
-            onClick = {
-                if (isRegistering) return@Button
+            Spacer(modifier = Modifier.height(24.dp))
 
-                // ✅ VALIDASI SEDERHANA: SEMUA DATA HARUS DIISI
-                val isValid = if (isRoleAdmin) {
-                    nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
-                            institusi.isNotBlank() && namaLab.isNotBlank()
+            // TOMBOL DAFTAR
+            Button(
+                onClick = {
+                    if (isRegistering) return@Button
+
+                    val isValid = if (isRoleAdmin) {
+                        nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
+                                institusi.isNotBlank() && namaLab.isNotBlank()
+                    } else {
+                        nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
+                                selectedLab != null
+                    }
+
+                    if (!isValid) {
+                        Toast.makeText(context, "Semua data harus diisi.", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    isRegistering = true
+                    if (isRoleAdmin) {
+                        viewModel.register(nama, username, password, institusi, namaLab)
+                    } else {
+                        viewModel.register(nama, username, password, labId = selectedLab!!.id)
+                    }
+                },
+                enabled = !isRegistering,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF485C91))
+            ) {
+                if (isRegistering) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
                 } else {
-                    nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
-                            selectedLab != null
+                    Text("Daftar", fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 }
-
-                if (!isValid) {
-                    Toast.makeText(context, "Semua data harus diisi.", Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-
-                isRegistering = true
-                if (isRoleAdmin) {
-                    viewModel.register(nama, username, password, institusi, namaLab)
-                } else {
-                    viewModel.register(nama, username, password, labId = selectedLab!!.id)
-                }
-            },
-            enabled = !isRegistering,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (isRegistering) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp,
-                    color = Color.White
-                )
-            } else {
-                Text("Daftar sebagai ${if (isRoleAdmin) "ADMIN" else "USER"}")
             }
-        }
 
-        TextButton(
-            onClick = { navController.navigate("login") },
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text("Sudah punya akun? Login")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // LINK LOGIN
+            TextButton(
+                onClick = { navController.navigate("login") }
+            ) {
+                Text("Sudah punya akun? ", color = Color.Gray)
+                Text("Masuk", color = Color(0xFF485C91), fontWeight = FontWeight.SemiBold)
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
+    }
+}
+
+@Composable
+fun RoleChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    selectedColor: Color,
+    unselectedColor: Color
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(if (isSelected) selectedColor else unselectedColor)
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+    ) {
+        Text(
+            text = text,
+            color = if (isSelected) Color.White else Color(0xFF485C91),
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+            fontSize = 14.sp
+        )
     }
 }
