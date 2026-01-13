@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">inventarislab</string>
+    <string name="welcome">Aplikasi Pencatatan Peralatan dan Bahan Kimia Laboratorium</string>
+    <string name="register">Daftar</string>
+    <string name="login">Login</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="kelola_pengguna">Kelola Pengguna</string>
+    <string name="bahan">Bahan</string>
+    <string name="bahan_list">Daftar Bahan</string>
+    <string name="detail_bahan">Detail Bahan</string>
+    <string name="edit_bahan">Edit Bahan</string>
+    <string name="alat_list">Daftar Alat</string>
+    <string name="detail_alat">Detail Alat</string>
+    <string name="edit_alat">Edit Alat</string>
+
+
+</resources>

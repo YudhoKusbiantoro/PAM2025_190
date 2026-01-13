@@ -1,0 +1,55 @@
+package com.example.inventarislab.repositori
+
+import android.app.Application
+import com.example.inventarislab.apiservice.ApiService
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+
+interface ContainerApp {
+    val repositoryInventaris: RepositoryInventaris  // ✅ Diubah dari repositoryDataSiswa
+}
+
+class DefaultContainerApp : ContainerApp {
+    private val baseUrl = "http://10.0.2.2/inventarislabor/"
+
+    private val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
+
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(
+            Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+                isLenient = true
+            }.asConverterFactory("application/json".toMediaType())
+        )
+        .client(client)
+        .build()
+
+    private val apiService: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
+    }
+
+    override val repositoryInventaris: RepositoryInventaris by lazy {  // ✅ Diubah
+        JaringanRepositoryInventaris(apiService)  // ✅ Diubah
+    }
+}
+
+class AplikasiInventarisLab : Application() {  // ✅ Nama kelas diubah agar relevan
+    lateinit var container: ContainerApp
+
+    override fun onCreate() {
+        super.onCreate()
+        this.container = DefaultContainerApp()
+    }
+}

@@ -1,0 +1,496 @@
+// view/bahan/HalamanBahan.kt
+package com.example.inventarislab.view.bahan
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.inventarislab.R
+import com.example.inventarislab.modeldata.Bahan
+import com.example.inventarislab.viewmodel.BahanViewModel
+import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HalamanBahan(
+    labId: Int,
+    navController: NavHostController,
+    onBackClick: () -> Unit
+) {
+    val viewModel: BahanViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    val bahan by viewModel.bahan.collectAsState()
+    val notification by viewModel.notification.collectAsState()
+
+    var showEditDialog by remember { mutableStateOf<Bahan?>(null) }
+    var showDeleteDialog by remember { mutableStateOf<Bahan?>(null) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    // 🔍 Filter state
+    var selectedFilter by remember { mutableStateOf<String?>("Semua") }
+
+    LaunchedEffect(labId) {
+        viewModel.loadBahanByLabId(labId)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            text = "Daftar Bahan",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Kimia Laboratorium",
+                            fontSize = 16.sp,
+                            color = Color(0xFFBDBDBD)
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF2196F3)
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate("tambah_bahan/$labId")
+                },
+                containerColor = Color(0xFF2196F3),
+                content = {
+                    Icon(Icons.Default.Add, contentDescription = "Tambah Bahan", tint = Color.White)
+                }
+            )
+        },
+        modifier = Modifier.background(Color(0xFFF5F7FA)) // Background abu-abu muda
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // NOTIFIKASI CARD - PUTIH & TIMBUL
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Notifikasi",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                    val n = notification ?: BahanViewModel.Notification(0, 0, 0, 0)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Total Bahan : ${n.total}")
+                        Text("Expired : ${n.expired}")
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Hampir expired : ${n.hampirExpired}")
+                        Text("Kondisi Rusak : ${n.rusak}")
+                    }
+                }
+            }
+
+            // SEARCH BAR
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // FILTER BUTTONS
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = selectedFilter == "Semua",
+                    onClick = { selectedFilter = "Semua" },
+                    label = { Text("Semua") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = if (selectedFilter == "Semua") Color(0xFFE8F5E9) else Color(0xFFF5F5F5),
+                        labelColor = if (selectedFilter == "Semua") Color(0xFF2E7D32) else Color.Gray
+                    )
+                )
+
+                FilterChip(
+                    selected = selectedFilter == "Hampir Expired",
+                    onClick = { selectedFilter = "Hampir Expired" },
+                    label = { Text("Hampir Expired") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = if (selectedFilter == "Hampir Expired") Color(0xFFFFF3E0) else Color(0xFFF5F5F5),
+                        labelColor = if (selectedFilter == "Hampir Expired") Color(0xFFFF6F00) else Color.Gray
+                    )
+                )
+
+                FilterChip(
+                    selected = selectedFilter == "Expired",
+                    onClick = { selectedFilter = "Expired" },
+                    label = { Text("Expired") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = if (selectedFilter == "Expired") Color(0xFFFFEBEE) else Color(0xFFF5F5F5),
+                        labelColor = if (selectedFilter == "Expired") Color.Red else Color.Gray
+                    )
+                )
+
+                FilterChip(
+                    selected = selectedFilter == "Rusak",
+                    onClick = { selectedFilter = "Rusak" },
+                    label = { Text("Rusak") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = if (selectedFilter == "Rusak") Color(0xFFFFF3E0) else Color(0xFFF5F5F5),
+                        labelColor = if (selectedFilter == "Rusak") Color(0xFFFF9800) else Color.Gray
+                    )
+                )
+            }
+
+            // LIST BAHAN
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(bahan.filter { item ->
+                    val matchesSearch = item.nama.contains(searchQuery, ignoreCase = true)
+                    val matchesFilter = when (selectedFilter) {
+                        "Semua" -> true
+                        "Hampir Expired" -> item.kondisi == "Hampir Expired"
+                        "Expired" -> item.kondisi == "Expired"
+                        "Rusak" -> item.kondisi == "Rusak"
+                        else -> true
+                    }
+                    matchesSearch && matchesFilter
+                }) { bahanItem ->
+                    BahanCard(
+                        bahan = bahanItem,
+                        onClick = {
+                            navController.navigate("detail_bahan/${bahanItem.id}")
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    // EDIT DIALOG
+    if (showEditDialog != null) {
+        EditBahanDialog(
+            bahan = showEditDialog!!,
+            onConfirm = { nama, volume, expired, kondisi ->
+                viewModel.updateBahan(
+                    id = showEditDialog!!.id,
+                    nama = nama,
+                    volume = volume,
+                    expired = expired,
+                    kondisi = kondisi,
+                    labId = labId
+                )
+                showEditDialog = null
+            },
+            onDismiss = { showEditDialog = null }
+        )
+    }
+
+    // DELETE DIALOG
+    if (showDeleteDialog != null) {
+        ConfirmDeleteBahanDialog(
+            itemName = showDeleteDialog!!.nama,
+            onConfirm = {
+                viewModel.deleteBahan(showDeleteDialog!!.id, labId)
+                showDeleteDialog = null
+            },
+            onDismiss = { showDeleteDialog = null }
+        )
+    }
+
+    // ADD DIALOG ✅
+    if (showAddDialog) {
+        AddBahanDialog(
+            onConfirm = { nama, volume, expired, kondisi ->
+                viewModel.createBahan(
+                    nama = nama,
+                    volume = volume,
+                    expired = expired,
+                    kondisi = kondisi,
+                    labId = labId
+                )
+                showAddDialog = false
+            },
+            onDismiss = { showAddDialog = false }
+        )
+    }
+}
+
+@Composable
+fun BahanCard(
+    bahan: Bahan,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White) // Card putih
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // KIRI: Logo + Nama + Detail
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.weight(1f)
+            ) {
+                // Logo (dari drawable)
+                Image(
+                    painter = painterResource(id = R.drawable.logobahan), // Ganti dengan nama gambar Anda
+                    contentDescription = "Logo Bahan",
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(8.dp))
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column {
+                    Text(
+                        text = bahan.nama,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "Volume: ${bahan.volume}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "Expired: ${bahan.expired}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray
+                    )
+                }
+            }
+
+            // KANAN: Status dalam kotak berwarna
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(
+                        color = when (bahan.kondisi) {
+                            "Expired" -> Color(0xFFFFEBEE) // Merah muda
+                            "Rusak" -> Color(0xFFFFF3E0)   // Kuning muda
+                            else -> Color(0xFFE8F5E9)      // Hijau muda
+                        }
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = bahan.kondisi.uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = when (bahan.kondisi) {
+                        "Expired" -> Color.Red
+                        "Rusak" -> Color(0xFFFF9800)
+                        else -> Color.Green
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditBahanDialog(
+    bahan: Bahan,
+    onConfirm: (String, String, String, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var nama by remember { mutableStateOf(bahan.nama) }
+    var volume by remember { mutableStateOf(bahan.volume) }
+    var expired by remember { mutableStateOf(bahan.expired) }
+    var kondisi by remember { mutableStateOf(bahan.kondisi) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Bahan") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = nama,
+                    onValueChange = { nama = it },
+                    label = { Text("Nama") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = volume,
+                    onValueChange = { volume = it },
+                    label = { Text("Volume") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = expired,
+                    onValueChange = { expired = it },
+                    label = { Text("Expired") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = kondisi,
+                    onValueChange = { kondisi = it },
+                    label = { Text("Kondisi") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm(nama, volume, expired, kondisi)
+            }) {
+                Text("Simpan")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Batal")
+            }
+        }
+    )
+}
+
+@Composable
+fun ConfirmDeleteBahanDialog(
+    itemName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Konfirmasi Hapus") },
+        text = { Text("Hapus bahan $itemName? Tindakan ini tidak dapat dibatalkan.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Hapus", color = MaterialTheme.colorScheme.error)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Batal")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddBahanDialog(
+    onConfirm: (String, String, String, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var nama by remember { mutableStateOf("") }
+    var volume by remember { mutableStateOf("") }
+    var expired by remember { mutableStateOf("") }
+    var kondisi by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Tambah Bahan") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = nama,
+                    onValueChange = { nama = it },
+                    label = { Text("Nama") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = volume,
+                    onValueChange = { volume = it },
+                    label = { Text("Volume") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = expired,
+                    onValueChange = { expired = it },
+                    label = { Text("Expired (YYYY-MM-DD)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = kondisi,
+                    onValueChange = { kondisi = it },
+                    label = { Text("Kondisi (Baik/Rusak/Expired)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (nama.isNotEmpty() && volume.isNotEmpty() && expired.isNotEmpty() && kondisi.isNotEmpty()) {
+                    onConfirm(nama, volume, expired, kondisi)
+                }
+            }) {
+                Text("Simpan")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Batal")
+            }
+        }
+    )
+}
