@@ -187,9 +187,21 @@ fun HalamanRegister(navController: NavController) {
 
         Button(
             onClick = {
-                if (isRegistering) return@Button // ✅ Cegah double click
+                if (isRegistering) return@Button
 
-                // ... validasi ...
+                // ✅ VALIDASI SEDERHANA: SEMUA DATA HARUS DIISI
+                val isValid = if (isRoleAdmin) {
+                    nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
+                            institusi.isNotBlank() && namaLab.isNotBlank()
+                } else {
+                    nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
+                            selectedLab != null
+                }
+
+                if (!isValid) {
+                    Toast.makeText(context, "Semua data harus diisi.", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
 
                 isRegistering = true
                 if (isRoleAdmin) {
