@@ -78,7 +78,13 @@ fun HalamanLogin(
             )
 
             Text(
-                text = "Please sign in to continue.",
+                text = "Silakan Masukan Username dan Password",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            Text(
+                text = "akun anda",
                 fontSize = 16.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -149,27 +155,6 @@ fun HalamanLogin(
                         )
                     }
 
-                    // REMEMBER ME (optional)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Remember me next time",
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                        Switch(
-                            checked = false,
-                            onCheckedChange = {},
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFF485C91),
-                                checkedTrackColor = Color(0xFF485C91).copy(alpha = 0.3f)
-                            )
-                        )
-                    }
-
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // LOGIN BUTTON
@@ -185,16 +170,16 @@ fun HalamanLogin(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF485C91))
                     ) {
-                        Text("Sign In", color = Color.White, fontWeight = FontWeight.Medium)
+                        Text("Masuk", color = Color.White, fontWeight = FontWeight.Medium)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // LINK SIGN UP
                     Row {
-                        Text("Don't have account? ", color = Color.Gray)
+                        Text("Sudah Punya Akun? ", color = Color.Gray)
                         Text(
-                            text = "Sign Up",
+                            text = "Registrasi",
                             color = Color(0xFF485C91),
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.clickable { navController.navigate("register") }
