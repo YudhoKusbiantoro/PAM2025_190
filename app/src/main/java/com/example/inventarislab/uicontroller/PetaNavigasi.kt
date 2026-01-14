@@ -29,6 +29,7 @@ import com.example.inventarislab.view.route.DestinasiBahanDetail
 import com.example.inventarislab.view.route.DestinasiBahanEdit
 import com.example.inventarislab.viewmodel.LoginViewModel
 import com.example.inventarislab.view.route.DestinasiBahanEntry
+import com.example.inventarislab.viewmodel.RegisterViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
 
 @Composable
@@ -48,7 +49,8 @@ fun PetaNavigasi(navController: NavHostController) {
         }
 
         composable("register") {
-            HalamanRegister(navController)
+            val registerViewModel: RegisterViewModel = viewModel(factory = PenyediaViewModel.Factory)
+            HalamanRegister(navController, registerViewModel)
         }
 
         composable("home") {

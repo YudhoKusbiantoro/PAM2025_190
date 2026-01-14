@@ -28,10 +28,11 @@ import com.example.inventarislab.viewmodel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HalamanRegister(navController: NavController) {
+fun HalamanRegister(
+    navController: NavController,
+    viewModel: RegisterViewModel
+) {
     val context = LocalContext.current
-    val viewModel: RegisterViewModel = viewModel()
-
     var nama by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -46,14 +47,12 @@ fun HalamanRegister(navController: NavController) {
     val registerResult by viewModel.registerResult.collectAsState()
     var isRegistering by remember { mutableStateOf(false) }
 
-    // ✅ LOAD LABS SAAT HALAMAN DIBUKA (JIKA ROLE USER)
     LaunchedEffect(Unit) {
         if (!isRoleAdmin) {
             viewModel.loadLabs()
         }
     }
 
-    // ✅ RESET SELECTED LAB SAAT GANTI KE ADMIN
     LaunchedEffect(isRoleAdmin) {
         if (isRoleAdmin) {
             selectedLab = null
@@ -68,6 +67,7 @@ fun HalamanRegister(navController: NavController) {
                 Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
                 navController.navigate("login")
             } else {
+                // ✅ HANYA TAMPILKAN PESAN DARI BACKEND
                 Toast.makeText(context, result.message ?: "Registrasi gagal", Toast.LENGTH_SHORT).show()
             }
             viewModel.resetRegisterResult()
@@ -89,9 +89,8 @@ fun HalamanRegister(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(60.dp))
 
-            // LOGO KIMIA DI ATAS TENGAH
             Image(
-                painter = painterResource(id = R.drawable.kimia1), // Ganti jika perlu
+                painter = painterResource(id = R.drawable.kimia1),
                 contentDescription = "Logo Kimia",
                 modifier = Modifier
                     .size(120.dp)
@@ -102,7 +101,7 @@ fun HalamanRegister(navController: NavController) {
 
             Text(
                 text = "Buat Akun Baru",
-                fontSize = 30.sp, // 📏 Sedikit lebih besar
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF485C91),
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -117,7 +116,6 @@ fun HalamanRegister(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // PILIHAN ROLE: ADMIN / PENGGUNA
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -141,7 +139,6 @@ fun HalamanRegister(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // FORM INPUT
             OutlinedTextField(
                 value = nama,
                 onValueChange = { nama = it },
@@ -213,11 +210,11 @@ fun HalamanRegister(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // TOMBOL DAFTAR
             Button(
                 onClick = {
                     if (isRegistering) return@Button
 
+                    // ✅ HANYA CEK APAKAH SEMUA FIELD SUDAH DIISI (TIDAK VALIDASI FORMAT)
                     val isValid = if (isRoleAdmin) {
                         nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
                                 institusi.isNotBlank() && namaLab.isNotBlank()
@@ -231,11 +228,32 @@ fun HalamanRegister(navController: NavController) {
                         return@Button
                     }
 
+                    if (!isValidUsername(username)) {
+                        Toast.makeText(
+                            context,
+                            "Username minimal 6 karakter dan hanya boleh huruf, angka, - atau _",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Button
+                    }
+
+                    if (!isValidPassword(password)) {
+                        Toast.makeText(
+                            context,
+                            "Password minimal 6 karakter dan hanya boleh huruf dan angka",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Button
+                    }
+
+
                     isRegistering = true
                     if (isRoleAdmin) {
                         viewModel.register(nama, username, password, institusi, namaLab)
                     } else {
-                        viewModel.register(nama, username, password, labId = selectedLab!!.id)
+                        // ✅ Simpan ke variabel lokal untuk hindari smart cast error
+                        val lab = selectedLab
+                        viewModel.register(nama, username, password, labId = lab!!.id)
                     }
                 },
                 enabled = !isRegistering,
@@ -256,7 +274,6 @@ fun HalamanRegister(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // LINK LOGIN
             TextButton(
                 onClick = { navController.navigate("login") }
             ) {
@@ -291,4 +308,13 @@ fun RoleChip(
             fontSize = 14.sp
         )
     }
+}
+fun isValidUsername(username: String): Boolean {
+    val regex = Regex("^[a-zA-Z0-9_-]{6,}$")
+    return regex.matches(username)
+}
+
+fun isValidPassword(password: String): Boolean {
+    val regex = Regex("^[a-zA-Z0-9]{6,}$")
+    return regex.matches(password)
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -64,7 +65,7 @@ fun HalamanLogin(
                 contentDescription = "Login Illustration",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.5f)
+                    .aspectRatio(1.7f)
                     .clip(RoundedCornerShape(20.dp))
             )
 
@@ -78,15 +79,10 @@ fun HalamanLogin(
             )
 
             Text(
-                text = "Silakan Masukan Username dan Password",
+                text = "Silakan masukkan username dan password akun Anda.",
                 fontSize = 16.sp,
                 color = Color.Gray,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-            Text(
-                text = "akun anda",
-                fontSize = 16.sp,
-                color = Color.Gray,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
@@ -120,7 +116,6 @@ fun HalamanLogin(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                         shape = RoundedCornerShape(12.dp)
                     )
-
                     // PASSWORD FIELD
                     OutlinedTextField(
                         value = password,
@@ -134,13 +129,6 @@ fun HalamanLogin(
                             )
                         },
                         visualTransformation = PasswordVisualTransformation(),
-                        trailingIcon = {
-                            // Optional: toggle visibility
-                            val icon = androidx.compose.material.icons.Icons.Default.VisibilityOff
-                            IconButton(onClick = {}) {
-                                Icon(imageVector = icon, contentDescription = "Toggle password visibility", tint = Color.Gray)
-                            }
-                        },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                         shape = RoundedCornerShape(12.dp)
                     )

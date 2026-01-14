@@ -8,6 +8,7 @@ import com.example.inventarislab.repositori.AplikasiInventarisLab
 import com.example.inventarislab.viewmodel.AlatViewModel
 import com.example.inventarislab.viewmodel.BahanViewModel
 import com.example.inventarislab.viewmodel.LoginViewModel
+import com.example.inventarislab.viewmodel.RegisterViewModel
 
 fun CreationExtras.aplikasiInventarisLab(): AplikasiInventarisLab =
     this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as com.example.inventarislab.repositori.AplikasiInventarisLab
@@ -23,6 +24,9 @@ object PenyediaViewModel {
             AlatViewModel(
                 aplikasiInventarisLab().container.repositoryInventaris
             )
+        }
+        initializer {
+            RegisterViewModel(aplikasiInventarisLab().container.repositoryInventaris)
         }
         initializer {
             LoginViewModel(aplikasiInventarisLab().container.repositoryInventaris)
