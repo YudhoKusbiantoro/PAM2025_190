@@ -278,7 +278,7 @@ fun HalamanRegister(
                 onClick = { navController.navigate("login") }
             ) {
                 Text("Sudah punya akun? ", color = Color.Gray)
-                Text("Masuk", color = Color(0xFF485C91), fontWeight = FontWeight.SemiBold)
+                Text("Login", color = Color(0xFF485C91), fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(modifier = Modifier.height(32.dp))

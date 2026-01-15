@@ -61,7 +61,7 @@ fun HalamanLogin(
         ) {
             // ILLUSTRASI BESAR DI ATAS
             Image(
-                painter = painterResource(id = R.drawable.kimia2), // Ganti dengan nama gambar Anda
+                painter = painterResource(id = R.drawable.logo1), // Ganti dengan nama gambar Anda
                 contentDescription = "Login Illustration",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,7 +162,7 @@ fun HalamanLogin(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF485C91))
                     ) {
-                        Text("Masuk", color = Color.White, fontWeight = FontWeight.Medium)
+                        Text("Login", color = Color.White, fontWeight = FontWeight.Medium)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
