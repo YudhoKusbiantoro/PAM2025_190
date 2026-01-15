@@ -148,11 +148,15 @@ fun HalamanLogin(
                     // LOGIN BUTTON
                     Button(
                         onClick = {
-                            if (username.isBlank() || password.isBlank()) {
+                            // ✅ TRIM INPUT SEBELUM VALIDASI
+                            val trimmedUsername = username.trim()
+                            val trimmedPassword = password.trim()
+
+                            if (trimmedUsername.isBlank() || trimmedPassword.isBlank()) {
                                 Toast.makeText(context, "Semua field harus diisi.", Toast.LENGTH_SHORT).show()
                                 return@Button
                             }
-                            viewModel.login(username, password)
+                            viewModel.login(trimmedUsername, trimmedPassword)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
