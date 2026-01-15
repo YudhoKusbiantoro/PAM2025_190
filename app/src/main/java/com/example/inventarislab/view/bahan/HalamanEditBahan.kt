@@ -1,7 +1,7 @@
-// view/HalamanEditBahan.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,11 +28,21 @@ fun HalamanEditBahan(
     val viewModel: BahanViewModel = viewModel(factory = PenyediaViewModel.Factory)
     val bahanState by viewModel.bahanDetail.collectAsState()
 
+    // ✅ AMBIL NILAI LANGSUNG (BUKAN DELEGATED PROPERTY)
+    val updateResult by viewModel.updateResult.collectAsState()
+    var isUpdating by remember { mutableStateOf(false) }
+
     var nama by remember { mutableStateOf("") }
     var volume by remember { mutableStateOf("") }
     var expired by remember { mutableStateOf("") }
     var kondisi by remember { mutableStateOf("") }
     var kondisiExpanded by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     // Load data awal
     LaunchedEffect(bahanId) {
@@ -49,11 +59,23 @@ fun HalamanEditBahan(
         }
     }
 
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    LaunchedEffect(updateResult) {
+        val result = updateResult
+        if (result != null) {
+            isUpdating = false
+            if (result.status == "success") {
+                Toast.makeText(context, "Bahan berhasil diperbarui!", Toast.LENGTH_SHORT).show()
+                onBackClick()
+            } else {
+                Toast.makeText(
+                    context,
+                    result.message ?: "Gagal memperbarui bahan",
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.resetUpdateResult()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -116,7 +138,6 @@ fun HalamanEditBahan(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ✅ DROPDOWN KONDISI
             ExposedDropdownMenuBox(
                 expanded = kondisiExpanded,
                 onExpandedChange = { kondisiExpanded = it }
@@ -151,17 +172,25 @@ fun HalamanEditBahan(
             Button(
                 onClick = {
                     if (nama.isBlank() || volume.isBlank() || expired.isBlank() || kondisi.isBlank()) {
+                        Toast.makeText(context, "Semua field harus diisi.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
-                    // Ambil lab_id dari data awal
                     val labId = bahanState?.lab_id ?: 1
+                    isUpdating = true
                     viewModel.updateBahan(bahanId, nama, volume, expired, kondisi, labId)
-                    onBackClick()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = nama.isNotBlank() && volume.isNotBlank() && expired.isNotBlank() && kondisi.isNotBlank()
+                enabled = !isUpdating && nama.isNotBlank() && volume.isNotBlank() && expired.isNotBlank() && kondisi.isNotBlank()
             ) {
-                Text("Simpan Perubahan")
+                if (isUpdating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                } else {
+                    Text("Simpan Perubahan")
+                }
             }
         }
     }

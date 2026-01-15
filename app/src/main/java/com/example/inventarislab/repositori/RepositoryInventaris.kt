@@ -2,6 +2,7 @@ package com.example.inventarislab.repositori
 
 import com.example.inventarislab.apiservice.ApiService
 import com.example.inventarislab.modeldata.*
+import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -89,26 +90,37 @@ class JaringanRepositoryInventaris(
     }
 
     // Helper untuk penanganan error umum
-    private suspend fun <T> safeApiCall(apiCall: suspend () -> ResponseData<T>): ResponseData<T> {
+    private suspend fun <T> safeApiCall(
+        apiCall: suspend () -> ResponseData<T>
+    ): ResponseData<T> {
         return try {
             apiCall()
         } catch (e: IOException) {
-            // Gunakan status "error" atau "failed" — sesuaikan dengan backend
+            // Tidak ada internet / timeout
             ResponseData(
-                status = "error",  // atau "failed"
-                message = "Network Error",
+                status = "error",
+                message = "Tidak ada koneksi internet",
                 data = null
             )
         } catch (e: HttpException) {
+            // 🔥 INI KUNCI UTAMA
+            val errorBody = e.response()?.errorBody()?.string()
+
+            val message = try {
+                JSONObject(errorBody ?: "").getString("message")
+            } catch (ex: Exception) {
+                "Terjadi kesalahan"
+            }
+
             ResponseData(
                 status = "error",
-                message = "Username atau password salah.",
+                message = message,
                 data = null
             )
         } catch (e: Exception) {
             ResponseData(
                 status = "error",
-                message = "Unexpected Error: ${e.message}",
+                message = e.message ?: "Unexpected Error",
                 data = null
             )
         }

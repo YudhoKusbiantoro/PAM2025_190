@@ -2,6 +2,7 @@
 package com.example.inventarislab.view.bahan
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -36,6 +37,25 @@ fun HalamanTambahBahan(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    // ✅ INI SAJA
+    val createResult by viewModel.createResult.collectAsState()
+
+    LaunchedEffect(createResult) {
+        createResult?.let { result ->
+            if (result.status == "success") {
+                navController.popBackStack()
+            } else {
+                Toast.makeText(
+                    context,
+                    result.message ?: "Bahan sudah ada di laboratorium ini.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            viewModel.resetCreateResult()
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -126,16 +146,14 @@ fun HalamanTambahBahan(
 
             Button(
                 onClick = {
-                    if (nama.isNotBlank() && volume.isNotBlank() && expired.isNotBlank() && kondisi.isNotBlank()) {
-                        viewModel.createBahan(nama, volume, expired, kondisi, labId)
-                        onBackClick()
-                    }
+                    viewModel.createBahan(nama, volume, expired, kondisi, labId)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = nama.isNotBlank() && volume.isNotBlank() && expired.isNotBlank() && kondisi.isNotBlank()
             ) {
                 Text("Simpan")
             }
+
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.inventarislab.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarislab.modeldata.Bahan
+import com.example.inventarislab.modeldata.ResponseData
 import com.example.inventarislab.repositori.RepositoryInventaris
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,9 @@ class BahanViewModel(
     private val _notification = MutableStateFlow<Notification?>(null)
     val notification: StateFlow<Notification?> = _notification
 
+    private val _createResult = MutableStateFlow<ResponseData<Bahan>?>(null)
+    val createResult: StateFlow<ResponseData<Bahan>?> = _createResult
+
     data class Notification(
         val total: Int,
         val expired: Int,
@@ -33,6 +37,9 @@ class BahanViewModel(
 
     private val _deleteResult = MutableStateFlow<String?>(null)
     val deleteResult: StateFlow<String?> = _deleteResult
+
+    private val _updateResult = MutableStateFlow<ResponseData<Bahan>?>(null)
+    val updateResult: StateFlow<ResponseData<Bahan>?> = _updateResult
 
     fun loadBahanByLabId(labId: Int) {
         viewModelScope.launch {
@@ -70,10 +77,16 @@ class BahanViewModel(
                     "lab_id" to labId.toString()
                 )
             )
+            _createResult.value = response
+
             if (response.status == "success") {
                 loadBahanByLabId(labId)
             }
         }
+    }
+
+    fun resetCreateResult() {
+        _createResult.value = null
     }
 
     fun updateBahan(
@@ -95,6 +108,7 @@ class BahanViewModel(
                     "lab_id" to labId.toString()
                 )
             )
+            _updateResult.value = response // ✅ SIMPAN HASIL KE STATE
             if (response.status == "success") {
                 loadBahanByLabId(labId)
             }
@@ -124,6 +138,10 @@ class BahanViewModel(
     fun clearBahanDetail() {
         _bahanDetail.value = null
     }
+    fun resetUpdateResult() {
+        _updateResult.value = null
+    }
+
 
     private fun calculateNotification(bahanList: List<Bahan>) {
         val today = Calendar.getInstance()
