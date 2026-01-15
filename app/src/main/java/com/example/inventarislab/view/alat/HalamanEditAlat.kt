@@ -1,7 +1,7 @@
-// view/HalamanEditAlat.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +29,10 @@ fun HalamanEditAlat(
 ) {
     val viewModel: AlatViewModel = viewModel(factory = PenyediaViewModel.Factory)
     val alatState by viewModel.alatDetail.collectAsState()
+
+    // ✅ TAMBAHKAN STATE UNTUK PANTAU HASIL
+    val updateResult by viewModel.updateResult.collectAsState()
+    var isUpdating by remember { mutableStateOf(false) }
 
     var nama by remember { mutableStateOf("") }
     var jumlah by remember { mutableStateOf("") }
@@ -57,6 +62,24 @@ fun HalamanEditAlat(
             intervalKalibrasi = alat.interval_kalibrasi.toString()
             satuanInterval = alat.satuan_interval
             kondisi = alat.kondisi
+        }
+    }
+
+    // ✅ TANGANI HASIL UPDATE
+    LaunchedEffect(updateResult) {
+        val result = updateResult
+        if (result != null) {
+            isUpdating = false
+            if (result.status == "success") {
+                onBackClick()
+            } else {
+                Toast.makeText(
+                    context,
+                    result.message ?: "Gagal memperbarui alat",
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.resetUpdateResult()
+            }
         }
     }
 
@@ -94,7 +117,6 @@ fun HalamanEditAlat(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ✅ TERAKHIR KALIBRASI → DATEPICKER
             OutlinedTextField(
                 value = terakhirKalibrasi,
                 onValueChange = { /* readOnly */ },
@@ -123,7 +145,6 @@ fun HalamanEditAlat(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ✅ SATUAN INTERVAL → DROPDOWN
             ExposedDropdownMenuBox(
                 expanded = satuanExpanded,
                 onExpandedChange = { satuanExpanded = it }
@@ -155,7 +176,6 @@ fun HalamanEditAlat(
                 }
             }
 
-            // ✅ KONDISI → DROPDOWN
             ExposedDropdownMenuBox(
                 expanded = kondisiExpanded,
                 onExpandedChange = { kondisiExpanded = it }
@@ -189,8 +209,10 @@ fun HalamanEditAlat(
 
             Button(
                 onClick = {
-                    if (nama.isNotEmpty() && jumlah.isNotEmpty() && terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty()) {
+                    if (nama.isNotEmpty() && jumlah.isNotEmpty() &&
+                        terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty()) {
                         alatState?.let { alat ->
+                            isUpdating = true
                             viewModel.updateAlat(
                                 id = alatId,
                                 nama = nama,
@@ -201,14 +223,24 @@ fun HalamanEditAlat(
                                 kondisi = kondisi,
                                 labId = alat.lab_id
                             )
-                            navController.popBackStack()
+                            // ❌ JANGAN PANGGIL popBackStack DI SINI!
                         }
+                    } else {
+                        Toast.makeText(context, "Semua field harus diisi.", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = nama.isNotEmpty() && jumlah.isNotEmpty() && terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty()
+                enabled = !isUpdating
             ) {
-                Text("Simpan Perubahan")
+                if (isUpdating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                } else {
+                    Text("Simpan Perubahan")
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ package com.example.inventarislab.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarislab.modeldata.Alat
+import com.example.inventarislab.modeldata.ResponseData
 import com.example.inventarislab.repositori.RepositoryInventaris
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,12 @@ class AlatViewModel(
 
     private val _notification = MutableStateFlow<Notification?>(null)
     val notification: StateFlow<Notification?> = _notification
+
+    private val _createResult = MutableStateFlow<ResponseData<Alat>?>(null)
+    val createResult: StateFlow<ResponseData<Alat>?> = _createResult
+
+    private val _updateResult = MutableStateFlow<ResponseData<Alat>?>(null)
+    val updateResult: StateFlow<ResponseData<Alat>?> = _updateResult
 
     data class Notification(
         val total: Int,
@@ -73,10 +80,15 @@ class AlatViewModel(
                     "lab_id" to labId.toString()
                 )
             )
+            _createResult.value = response
             if (response.status == "success") {
                 loadAlatByLabId(labId)
             }
         }
+    }
+
+    fun resetCreateResult() {
+        _createResult.value = null
     }
 
     fun updateAlat(
@@ -102,10 +114,16 @@ class AlatViewModel(
                     "lab_id" to labId.toString()
                 )
             )
+            _updateResult.value = response // ✅ INI YANG KURANG
             if (response.status == "success") {
                 loadAlatByLabId(labId)
             }
         }
+    }
+
+    // ✅ TAMBAHKAN INI
+    fun resetUpdateResult() {
+        _updateResult.value = null
     }
 
     fun deleteAlat(id: Int, labId: Int) {

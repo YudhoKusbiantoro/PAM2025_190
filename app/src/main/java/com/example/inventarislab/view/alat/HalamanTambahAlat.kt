@@ -1,7 +1,7 @@
-// view/HalamanTambahAlat.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,12 +29,16 @@ fun HalamanTambahAlat(
 ) {
     val viewModel: AlatViewModel = viewModel(factory = PenyediaViewModel.Factory)
 
+    // ✅ TAMBAHKAN STATE UNTUK PANTAU HASIL
+    val createResult by viewModel.createResult.collectAsState()
+    var isCreating by remember { mutableStateOf(false) }
+
     var nama by remember { mutableStateOf("") }
     var jumlah by remember { mutableStateOf("") }
     var terakhirKalibrasi by remember { mutableStateOf("") }
     var intervalKalibrasi by remember { mutableStateOf("") }
-    var satuanInterval by remember { mutableStateOf("") } // ✅ Kosong untuk placeholder
-    var kondisi by remember { mutableStateOf("") }       // ✅ Kosong untuk placeholder
+    var satuanInterval by remember { mutableStateOf("") }
+    var kondisi by remember { mutableStateOf("") }
 
     var satuanExpanded by remember { mutableStateOf(false) }
     var kondisiExpanded by remember { mutableStateOf(false) }
@@ -43,6 +48,25 @@ fun HalamanTambahAlat(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    // ✅ TANGANI HASIL OPERASI
+    // ✅ TANGANI HASIL OPERASI
+    LaunchedEffect(createResult) {
+        val result = createResult  // ✅ Ambil nilai lokal
+        if (result != null) {
+            isCreating = false
+            if (result.status == "success") {
+                onBackClick()
+            } else {
+                Toast.makeText(
+                    context,
+                    result.message ?: "Gagal menambahkan alat",
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.resetCreateResult()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -78,7 +102,6 @@ fun HalamanTambahAlat(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ✅ TERAKHIR KALIBRASI → DATEPICKER
             OutlinedTextField(
                 value = terakhirKalibrasi,
                 onValueChange = { /* readOnly */ },
@@ -107,7 +130,6 @@ fun HalamanTambahAlat(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ✅ SATUAN INTERVAL → DROPDOWN
             ExposedDropdownMenuBox(
                 expanded = satuanExpanded,
                 onExpandedChange = { satuanExpanded = it }
@@ -139,7 +161,6 @@ fun HalamanTambahAlat(
                 }
             }
 
-            // ✅ KONDISI → DROPDOWN (hanya Baik & Rusak)
             ExposedDropdownMenuBox(
                 expanded = kondisiExpanded,
                 onExpandedChange = { kondisiExpanded = it }
@@ -158,7 +179,7 @@ fun HalamanTambahAlat(
                     expanded = kondisiExpanded,
                     onDismissRequest = { kondisiExpanded = false }
                 ) {
-                    listOf("Baik", "Rusak").forEach { item ->  // ✅ Hanya Baik & Rusak
+                    listOf("Baik", "Rusak").forEach { item ->
                         DropdownMenuItem(
                             text = { Text(item) },
                             onClick = {
@@ -173,7 +194,10 @@ fun HalamanTambahAlat(
 
             Button(
                 onClick = {
-                    if (nama.isNotEmpty() && jumlah.isNotEmpty() && terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty()) {
+                    if (nama.isNotEmpty() && jumlah.isNotEmpty() &&
+                        terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty() &&
+                        satuanInterval.isNotEmpty() && kondisi.isNotEmpty()) {
+                        isCreating = true
                         viewModel.createAlat(
                             nama = nama,
                             jumlah = jumlah,
@@ -183,13 +207,23 @@ fun HalamanTambahAlat(
                             kondisi = kondisi,
                             labId = labId
                         )
-                        navController.popBackStack()
+                        // ❌ JANGAN PANGGIL popBackStack DI SINI!
+                    } else {
+                        Toast.makeText(context, "Semua field harus diisi.", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = nama.isNotEmpty() && jumlah.isNotEmpty() && terakhirKalibrasi.isNotEmpty() && intervalKalibrasi.isNotEmpty()
+                enabled = !isCreating
             ) {
-                Text("Simpan Alat")
+                if (isCreating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                } else {
+                    Text("Simpan Alat")
+                }
             }
         }
     }
