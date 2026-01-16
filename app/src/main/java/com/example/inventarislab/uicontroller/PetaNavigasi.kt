@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.inventarislab.uicontroller.route.DestinasiKelolaPengguna
 import com.example.inventarislab.view.HalamanAlat
 import com.example.inventarislab.view.HalamanDetailAlat
 import com.example.inventarislab.view.HalamanDetailBahan
@@ -24,11 +25,13 @@ import com.example.inventarislab.view.bahan.HalamanTambahBahan
 import com.example.inventarislab.view.HalamanWelcome
 import com.example.inventarislab.view.route.DestinasiAlatDetail
 import com.example.inventarislab.view.route.DestinasiAlatEdit
-import com.example.inventarislab.view.route.DestinasiAlatEntry
 import com.example.inventarislab.view.route.DestinasiBahanDetail
 import com.example.inventarislab.view.route.DestinasiBahanEdit
+import com.example.inventarislab.view.route.DestinasiDaftarAlat
+import com.example.inventarislab.view.route.DestinasiDaftarBahan
+import com.example.inventarislab.view.route.DestinasiTambahAlat
 import com.example.inventarislab.viewmodel.LoginViewModel
-import com.example.inventarislab.view.route.DestinasiBahanEntry
+import com.example.inventarislab.view.route.DestinasiTambahBahan
 import com.example.inventarislab.viewmodel.RegisterViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
 
@@ -59,11 +62,11 @@ fun PetaNavigasi(navController: NavHostController) {
                 viewModel = loginViewModel,
                 onBahanClick = {
                     val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
-                    navController.navigate("${DestinasiBahanEntry.route}/$labId")
+                    navController.navigate("${DestinasiTambahBahan.route}/$labId")
                 },
                 onPeralatanClick = {
                     val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
-                    navController.navigate("${DestinasiAlatEntry.route}/$labId") // ✅ Gunakan destinasi
+                    navController.navigate("${DestinasiDaftarAlat.route}/$labId")
                 },
                 onLogoutClick = {
                     loginViewModel.logout()
@@ -75,15 +78,13 @@ fun PetaNavigasi(navController: NavHostController) {
                 }
             )
         }
-
-        // ✅ DESTINASI BAHAN ENTRY (KONSISTEN STRING)
         composable(
-            DestinasiBahanEntry.routeWithArgs,
+            DestinasiDaftarBahan.routeWithArgs,
             arguments = listOf(
-                navArgument(DestinasiBahanEntry.labIdArg) { type = NavType.StringType }
+                navArgument(DestinasiDaftarBahan.labIdArg) { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val labIdStr = backStackEntry.arguments?.getString(DestinasiBahanEntry.labIdArg) ?: "1"
+            val labIdStr = backStackEntry.arguments?.getString(DestinasiDaftarBahan.labIdArg) ?: "1"
             val labId = labIdStr.toIntOrNull() ?: 1
             HalamanBahan(
                 labId = labId,
@@ -92,7 +93,23 @@ fun PetaNavigasi(navController: NavHostController) {
             )
         }
 
-        // ✅ DESTINASI BAHAN DETAIL (KONSISTEN STRING)
+        // ✅ DESTINASI TAMBAH BAHAN
+        composable(
+            DestinasiTambahBahan.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiTambahBahan.labIdArg) { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val labIdStr = backStackEntry.arguments?.getString(DestinasiTambahBahan.labIdArg) ?: "1"
+            val labId = labIdStr.toIntOrNull() ?: 1
+            HalamanTambahBahan(
+                labId = labId,
+                navController = navController,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // ✅ DESTINASI DETAIL BAHAN
         composable(
             DestinasiBahanDetail.routeWithArgs,
             arguments = listOf(
@@ -108,7 +125,8 @@ fun PetaNavigasi(navController: NavHostController) {
             )
         }
 
-        // ✅ DESTINASI BAHAN EDIT (KONSISTEN STRING)
+
+        // ✅ DESTINASI EDIT BAHAN
         composable(
             DestinasiBahanEdit.routeWithArgs,
             arguments = listOf(
@@ -119,22 +137,6 @@ fun PetaNavigasi(navController: NavHostController) {
             val id = idStr.toIntOrNull() ?: 1
             HalamanEditBahan(
                 bahanId = id,
-                navController = navController,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
-        // TAMBAH BAHAN — JUGA PAKAI DESTINASI (BUAT KONSISTEN)
-        composable(
-            "tambah_bahan/{labId}",
-            arguments = listOf(
-                navArgument("labId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val labIdStr = backStackEntry.arguments?.getString("labId") ?: "1"
-            val labId = labIdStr.toIntOrNull() ?: 1
-            HalamanTambahBahan(
-                labId = labId,
                 navController = navController,
                 onBackClick = { navController.popBackStack() }
             )
@@ -155,22 +157,23 @@ fun PetaNavigasi(navController: NavHostController) {
             )
         }
 
-        // ALAT — SUDAH DIPERBAIKI
+        // ✅ DESTINASI DAFTAR ALAT
         composable(
-            DestinasiAlatEntry.routeWithArgs,
+            DestinasiDaftarAlat.routeWithArgs,
             arguments = listOf(
-                navArgument(DestinasiAlatEntry.labIdArg) { type = NavType.StringType }
+                navArgument(DestinasiDaftarAlat.labIdArg) { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val labIdStr = backStackEntry.arguments?.getString(DestinasiAlatEntry.labIdArg) ?: "1"
+            val labIdStr = backStackEntry.arguments?.getString(DestinasiDaftarAlat.labIdArg) ?: "1"
             val labId = labIdStr.toIntOrNull() ?: 1
             HalamanAlat(
                 labId = labId,
                 navController = navController,
-                onBackClick = { navController.popBackStack() } // ✅ Ditambahkan
+                onBackClick = { navController.popBackStack() }
             )
         }
 
+        // ✅ DESTINASI DETAIL ALAT
         composable(
             DestinasiAlatDetail.routeWithArgs,
             arguments = listOf(
@@ -182,10 +185,11 @@ fun PetaNavigasi(navController: NavHostController) {
             HalamanDetailAlat(
                 alatId = id,
                 navController = navController,
-                onBackClick = { navController.popBackStack() } // ✅ Ditambahkan
+                onBackClick = { navController.popBackStack() }
             )
         }
 
+        // ✅ DESTINASI EDIT ALAT
         composable(
             DestinasiAlatEdit.routeWithArgs,
             arguments = listOf(
@@ -197,21 +201,36 @@ fun PetaNavigasi(navController: NavHostController) {
             HalamanEditAlat(
                 alatId = id,
                 navController = navController,
-                onBackClick = { navController.popBackStack() } // ✅ Ditambahkan
+                onBackClick = { navController.popBackStack() }
             )
         }
-        // TAMBAH ALAT
+
+        // ✅ DESTINASI TAMBAH ALAT
         composable(
-            "tambah_alat/{labId}",
+            DestinasiTambahAlat.routeWithArgs,
             arguments = listOf(
-                navArgument("labId") { type = NavType.StringType }
+                navArgument(DestinasiTambahAlat.labIdArg) { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val labIdStr = backStackEntry.arguments?.getString("labId") ?: "1"
+            val labIdStr = backStackEntry.arguments?.getString(DestinasiTambahAlat.labIdArg) ?: "1"
             val labId = labIdStr.toIntOrNull() ?: 1
             HalamanTambahAlat(
                 labId = labId,
                 navController = navController,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        // ✅ DESTINASI KELOLA PENGGUNA
+        composable(
+            DestinasiKelolaPengguna.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiKelolaPengguna.labIdArg) { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val labIdStr = backStackEntry.arguments?.getString(DestinasiKelolaPengguna.labIdArg) ?: "1"
+            val labId = labIdStr.toIntOrNull() ?: 1
+            HalamanKelolaPengguna(
+                labId = labId,
                 onBackClick = { navController.popBackStack() }
             )
         }

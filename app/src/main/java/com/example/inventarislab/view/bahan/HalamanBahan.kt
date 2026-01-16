@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.inventarislab.R
 import com.example.inventarislab.modeldata.Bahan
+import com.example.inventarislab.view.route.DestinasiTambahBahan
 import com.example.inventarislab.viewmodel.BahanViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
 
@@ -82,7 +83,7 @@ fun HalamanBahan(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("tambah_bahan/$labId")
+                    navController.navigate("${DestinasiTambahBahan.route}/$labId")
                 },
                 containerColor = Color(0xFF2196F3),
                 content = {
