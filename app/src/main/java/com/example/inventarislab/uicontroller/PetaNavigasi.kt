@@ -60,21 +60,18 @@ fun PetaNavigasi(navController: NavHostController) {
             val currentUser = loginViewModel.currentUser.collectAsState()
             HalamanHome(
                 viewModel = loginViewModel,
-                onBahanClick = {
-                    val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
-                    navController.navigate("${DestinasiTambahBahan.route}/$labId")
+                onBahanClick = { labId ->
+                    navController.navigate("${DestinasiDaftarBahan.route}/$labId")
                 },
-                onPeralatanClick = {
-                    val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
+                onPeralatanClick = { labId ->
                     navController.navigate("${DestinasiDaftarAlat.route}/$labId")
                 },
                 onLogoutClick = {
                     loginViewModel.logout()
                     navController.navigate("welcome")
                 },
-                onKelolaPenggunaClick = {
-                    val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
-                    navController.navigate("kelola_pengguna/$labId")
+                onKelolaPenggunaClick = { labId ->
+                    navController.navigate("${DestinasiKelolaPengguna.route}/$labId")
                 }
             )
         }

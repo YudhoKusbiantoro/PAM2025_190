@@ -1,19 +1,13 @@
-// view/HalamanHome.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,16 +22,17 @@ import com.example.inventarislab.viewmodel.LoginViewModel
 @Composable
 fun HalamanHome(
     viewModel: LoginViewModel,
-    onBahanClick: () -> Unit,
-    onPeralatanClick: () -> Unit,
+    onBahanClick: (Int) -> Unit,
+    onPeralatanClick: (Int) -> Unit,
     onLogoutClick: () -> Unit,
-    onKelolaPenggunaClick: () -> Unit
+    onKelolaPenggunaClick: (Int) -> Unit
 ) {
     val currentUser = viewModel.currentUser.collectAsState()
     val userName = currentUser.value?.nama ?: "User"
     val userRole = currentUser.value?.role ?: "user"
     val institusi = currentUser.value?.institusi ?: "Instansi"
     val namaLab = currentUser.value?.nama_lab ?: "Laboratorium"
+    val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
 
     Scaffold(
         topBar = {
@@ -84,16 +79,13 @@ fun HalamanHome(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            // CARD BAHAN
             Card(
                 modifier = Modifier.fillMaxWidth().height(120.dp),
                 shape = RoundedCornerShape(18.dp),
                 elevation = CardDefaults.cardElevation(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF2196F3)),
-                onClick = {
-                    val labId = currentUser.value?.lab_id?.takeIf { it > 0 } ?: 1
-                    onBahanClick()
-                    // ✅ Kirim labId yang valid
-                }
+                onClick = { onBahanClick(labId) } // ✅ Kirim labId
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -114,12 +106,13 @@ fun HalamanHome(
                 }
             }
 
+            // CARD PERALATAN
             Card(
                 modifier = Modifier.fillMaxWidth().height(120.dp),
                 shape = RoundedCornerShape(18.dp),
                 elevation = CardDefaults.cardElevation(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF2196F3)),
-                onClick = onPeralatanClick
+                onClick = { onPeralatanClick(labId) } // ✅ Kirim labId
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -140,13 +133,14 @@ fun HalamanHome(
                 }
             }
 
+            // CARD KELOLA PENGGUNA (HANYA UNTUK ADMIN)
             if (userRole == "admin") {
                 Card(
                     modifier = Modifier.fillMaxWidth().height(120.dp),
                     shape = RoundedCornerShape(18.dp),
                     elevation = CardDefaults.cardElevation(12.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50)),
-                    onClick = onKelolaPenggunaClick
+                    onClick = { onKelolaPenggunaClick(labId) } // ✅ Kirim labId
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -168,12 +162,12 @@ fun HalamanHome(
                 }
             }
 
-            // Card Logout - disamakan dengan 3 card di atas
+            // CARD LOGOUT
             Card(
                 modifier = Modifier.fillMaxWidth().height(120.dp),
                 shape = RoundedCornerShape(18.dp),
                 elevation = CardDefaults.cardElevation(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE57373)), // Background putih
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE57373)),
                 onClick = onLogoutClick
             ) {
                 Row(
@@ -183,12 +177,12 @@ fun HalamanHome(
                 ) {
                     Text(
                         text = "Logout",
-                        color = Color.Black, // Teks hitam agar kelihatan di background putih
+                        color = Color.Black,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Image(
-                        painter = painterResource(id = R.drawable.logout), // Gambar logout dari drawable
+                        painter = painterResource(id = R.drawable.logout),
                         contentDescription = "Logout",
                         modifier = Modifier.size(70.dp)
                     )
