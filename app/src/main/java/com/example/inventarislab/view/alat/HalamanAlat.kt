@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.inventarislab.R
 import com.example.inventarislab.modeldata.Alat
+import com.example.inventarislab.view.route.DestinasiTambahAlat
 import com.example.inventarislab.viewmodel.AlatViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
 import java.text.SimpleDateFormat
@@ -80,7 +81,7 @@ fun HalamanAlat(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("tambah_alat/$labId")
+                    navController.navigate("${DestinasiTambahAlat.route}/$labId")
                 },
                 containerColor = Color(0xFF2196F3),
                 content = {
