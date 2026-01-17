@@ -15,11 +15,11 @@ import com.example.inventarislab.uicontroller.route.DestinasiLogin
 import com.example.inventarislab.uicontroller.route.DestinasiRegister
 import com.example.inventarislab.uicontroller.route.DestinasiWelcome
 import com.example.inventarislab.view.HalamanAlat
+import com.example.inventarislab.view.HalamanBahan
 import com.example.inventarislab.view.HalamanDetailAlat
 import com.example.inventarislab.view.HalamanDetailBahan
 import com.example.inventarislab.view.HalamanEditAlat
 import com.example.inventarislab.view.HalamanEditBahan
-import com.example.inventarislab.view.bahan.HalamanBahan
 import com.example.inventarislab.view.HalamanHome
 import com.example.inventarislab.view.HalamanKelolaPengguna
 import com.example.inventarislab.view.HalamanLogin
