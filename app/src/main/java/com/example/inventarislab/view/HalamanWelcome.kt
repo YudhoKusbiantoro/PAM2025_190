@@ -30,7 +30,6 @@ fun HalamanWelcome(navController: NavController) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // === BACKGROUND LENGKUNG BIRU ===
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

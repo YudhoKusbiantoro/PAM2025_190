@@ -1,4 +1,3 @@
-// view/HalamanKelolaPengguna.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
@@ -161,7 +160,6 @@ fun HalamanKelolaPengguna(
         )
     }
 
-    // NOTIFIKASI SUKSES
     if (notificationMessage != null) {
         Box(
             modifier = Modifier
@@ -268,8 +266,6 @@ fun UserCard(
                     }
                 }
             }
-
-            // KANAN: Ikon Edit & Hapus
             Row {
                 IconButton(onClick = onEditClick) {
                     Icon(

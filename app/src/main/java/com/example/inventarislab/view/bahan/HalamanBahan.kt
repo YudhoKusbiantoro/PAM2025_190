@@ -1,4 +1,3 @@
-// view/bahan/HalamanBahan.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,13 +74,13 @@ fun HalamanBahan(
                 title = {
                     Column {
                         Text(
-                            text = "Daftar Bahan",
+                            text = stringResource(R.string.bahan_list),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Text(
-                            text = "Kimia Laboratorium",
+                            text = stringResource((R.string.kimia_lab)),
                             fontSize = 16.sp,
                             color = Color(0xFFBDBDBD)
                         )
@@ -114,7 +114,6 @@ fun HalamanBahan(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // NOTIFIKASI CARD - PUTIH & TIMBUL DENGAN LOGO & SUSUNAN 2x2
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -125,6 +124,7 @@ fun HalamanBahan(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // ================= NOTIFIKASI =================
                     Text(
                         text = "Notifikasi",
                         fontWeight = FontWeight.Bold,
@@ -132,22 +132,25 @@ fun HalamanBahan(
                         color = Color.Gray
                     )
 
-                    val n = notification ?: BahanListViewModel.Notification(0, 0, 0, 0)
+                    val n = notification ?: BahanListViewModel.Notification(
+                        total = 0,
+                        expired = 0,
+                        hampirExpired = 0,
+                        rusak = 0
+                    )
 
-                    // ROW UNTUK 2 KOLOM
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // KOLOM KIRI
+
+                        // -------- KOLOM KIRI --------
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // Baris 1: Total Bahan
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = R.drawable.all),
                                     contentDescription = "Total Bahan",
@@ -157,29 +160,24 @@ fun HalamanBahan(
                                 Text("Total Bahan : ${n.total}")
                             }
 
-                            // Baris 2: Hampir Expired
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = R.drawable.hampirexpired),
                                     contentDescription = "Hampir Expired",
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Hampir expired : ${n.hampirExpired}")
+                                Text("Hampir Expired : ${n.hampirExpired}")
                             }
                         }
 
-                        // KOLOM KANAN
+                        // -------- KOLOM KANAN --------
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // Baris 3: Expired
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = R.drawable.expired),
                                     contentDescription = "Expired",
@@ -189,13 +187,10 @@ fun HalamanBahan(
                                 Text("Expired : ${n.expired}")
                             }
 
-                            // Baris 4: Kondisi Rusak
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = R.drawable.rusak),
-                                    contentDescription = "Kondisi Rusak",
+                                    contentDescription = "Rusak",
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -205,16 +200,13 @@ fun HalamanBahan(
                     }
                 }
             }
-
-            // SEARCH BAR
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                label = { Text("Search") },
+                label = { Text(stringResource(R.string.search)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // FILTER BUTTONS
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -224,7 +216,7 @@ fun HalamanBahan(
                 FilterChip(
                     selected = selectedFilter == "Semua",
                     onClick = { selectedFilter = "Semua" },
-                    label = { Text("Semua") },
+                    label = { Text(stringResource(R.string.semua)) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = if (selectedFilter == "Semua") Color(0xFFE8F5E9) else Color(0xFFF5F5F5),
                         labelColor = if (selectedFilter == "Semua") Color(0xFF2E7D32) else Color.Gray
@@ -234,7 +226,7 @@ fun HalamanBahan(
                 FilterChip(
                     selected = selectedFilter == "Hampir Expired",
                     onClick = { selectedFilter = "Hampir Expired" },
-                    label = { Text("Hampir Expired") },
+                    label = { Text(stringResource(R.string.hampir_expired)) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = if (selectedFilter == "Hampir Expired") Color(0xFFFFF3E0) else Color(0xFFF5F5F5),
                         labelColor = if (selectedFilter == "Hampir Expired") Color(0xFFFF6F00) else Color.Gray
@@ -244,7 +236,7 @@ fun HalamanBahan(
                 FilterChip(
                     selected = selectedFilter == "Expired",
                     onClick = { selectedFilter = "Expired" },
-                    label = { Text("Expired") },
+                    label = { Text(stringResource(R.string.expired)) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = if (selectedFilter == "Expired") Color(0xFFFFEBEE) else Color(0xFFF5F5F5),
                         labelColor = if (selectedFilter == "Expired") Color.Red else Color.Gray
@@ -254,7 +246,7 @@ fun HalamanBahan(
                 FilterChip(
                     selected = selectedFilter == "Rusak",
                     onClick = { selectedFilter = "Rusak" },
-                    label = { Text("Rusak") },
+                    label = { Text(stringResource(R.string.rusak)) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = if (selectedFilter == "Rusak") Color(0xFFFFF3E0) else Color(0xFFF5F5F5),
                         labelColor = if (selectedFilter == "Rusak") Color(0xFFFF9800) else Color.Gray
@@ -322,8 +314,6 @@ fun HalamanBahan(
             }
         }
     }
-
-    // DIALOGS
     if (showEditDialog != null) {
         EditBahanDialog(
             bahan = showEditDialog!!,
@@ -453,8 +443,6 @@ fun BahanCard(
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditBahanDialog(
     bahan: Bahan,
@@ -468,7 +456,7 @@ fun EditBahanDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Bahan") },
+        title = { Text(stringResource(R.string.edit_bahan)) },
         text = {
             Column {
                 OutlinedTextField(
@@ -488,7 +476,7 @@ fun EditBahanDialog(
                 OutlinedTextField(
                     value = expired,
                     onValueChange = { expired = it },
-                    label = { Text("Expired") },
+                    label = { Text(stringResource(R.string.expired)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
@@ -537,8 +525,6 @@ fun ConfirmDeleteBahanDialog(
         }
     )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBahanDialog(
     onConfirm: (String, String, String, String) -> Unit,
@@ -599,10 +585,6 @@ fun AddBahanDialog(
         }
     )
 }
-
-/* =========================
-   HELPER (SDK 24 SAFE)
-   ========================= */
 
 fun isHampirExpired(expiredDate: String): Boolean {
     return try {

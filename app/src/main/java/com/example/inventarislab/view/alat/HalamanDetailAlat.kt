@@ -1,4 +1,3 @@
-// view/HalamanDetailAlat.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
@@ -37,10 +36,8 @@ fun HalamanDetailAlat(
     navController: NavHostController,
     onBackClick: () -> Unit
 ) {
-    // ✅ Gunakan ViewModel terpisah
     val detailViewModel: AlatDetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
     val deleteViewModel: AlatDeleteViewModel = viewModel(factory = PenyediaViewModel.Factory)
-
     val alatState by detailViewModel.alatDetail.collectAsState()
     val deleteResult by deleteViewModel.deleteResult.collectAsState()
 
@@ -219,8 +216,6 @@ fun HalamanDetailAlat(
                         }
                     }
                 }
-
-                // 🔘 TOMBOL EDIT & HAPUS — SAMA PERSIS DENGAN HALAMAN BAHAN
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

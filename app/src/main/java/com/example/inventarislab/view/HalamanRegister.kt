@@ -1,4 +1,3 @@
-// view/HalamanRegister.kt
 package com.example.inventarislab.view
 
 import android.widget.Toast
@@ -67,7 +66,6 @@ fun HalamanRegister(
                 Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
                 navController.navigate("login")
             } else {
-                // ✅ HANYA TAMPILKAN PESAN DARI BACKEND
                 Toast.makeText(context, result.message ?: "Registrasi gagal", Toast.LENGTH_SHORT).show()
             }
             viewModel.resetRegisterResult()
@@ -214,7 +212,6 @@ fun HalamanRegister(
                 onClick = {
                     if (isRegistering) return@Button
 
-                    // ✅ HANYA CEK APAKAH SEMUA FIELD SUDAH DIISI (TIDAK VALIDASI FORMAT)
                     val isValid = if (isRoleAdmin) {
                         nama.isNotBlank() && username.isNotBlank() && password.isNotBlank() &&
                                 institusi.isNotBlank() && namaLab.isNotBlank()
@@ -251,7 +248,6 @@ fun HalamanRegister(
                     if (isRoleAdmin) {
                         viewModel.register(nama, username, password, institusi, namaLab)
                     } else {
-                        // ✅ Simpan ke variabel lokal untuk hindari smart cast error
                         val lab = selectedLab
                         viewModel.register(nama, username, password, labId = lab!!.id)
                     }

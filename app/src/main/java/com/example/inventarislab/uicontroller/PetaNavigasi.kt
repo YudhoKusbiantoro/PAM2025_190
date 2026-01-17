@@ -1,4 +1,3 @@
-// uicontroller/PetaNavigasi.kt
 package com.example.inventarislab.uicontroller
 
 import androidx.compose.runtime.collectAsState

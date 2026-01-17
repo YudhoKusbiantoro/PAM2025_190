@@ -1,4 +1,3 @@
-// view/HalamanEditAlat.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
@@ -30,10 +29,9 @@ fun HalamanEditAlat(
     navController: NavHostController,
     onBackClick: () -> Unit
 ) {
-    // ✅ Gunakan ViewModel terpisah
+
     val detailViewModel: AlatDetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
     val updateViewModel: AlatUpdateViewModel = viewModel(factory = PenyediaViewModel.Factory)
-
     val alatState by detailViewModel.alatDetail.collectAsState()
     val updateResult by updateViewModel.updateResult.collectAsState()
 
@@ -69,8 +67,6 @@ fun HalamanEditAlat(
             kondisi = alat.kondisi
         }
     }
-
-    // ✅ TANGANI HASIL UPDATE
     LaunchedEffect(updateResult) {
         val result = updateResult
         if (result != null) {

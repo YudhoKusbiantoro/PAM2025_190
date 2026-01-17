@@ -1,4 +1,3 @@
-// view/HalamanEditBahan.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
@@ -15,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-// ✅ Ganti import ViewModel
 import com.example.inventarislab.viewmodel.bahan.BahanDetailViewModel
 import com.example.inventarislab.viewmodel.bahan.BahanUpdateViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
@@ -28,7 +26,6 @@ fun HalamanEditBahan(
     navController: NavHostController,
     onBackClick: () -> Unit
 ) {
-    // ✅ Gunakan ViewModel terpisah
     val detailViewModel: BahanDetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
     val updateViewModel: BahanUpdateViewModel = viewModel(factory = PenyediaViewModel.Factory)
 

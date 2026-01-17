@@ -1,4 +1,3 @@
-// MainActivity.kt
 package com.example.inventarislab
 
 import android.os.Bundle

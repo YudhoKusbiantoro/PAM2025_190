@@ -15,5 +15,43 @@
     <string name="tambah_bahan">Tambah Bahan</string>
     <string name="peralatan">Peralatan</string>
     <string name="tambah_alat">Tambah Alat</string>
+    <string name="kimia_lab">Kimia Laboratorium</string>
+    <string name="notifikasi">Notifikasi</string>
+    <string name="total_bahan">Total Bahan</string>
+    <string name="hampir_expired">Hampir Epired</string>
+    <string name="expired">Expired</string>
+    <string name="kondisi_rusak">Kondisi Rusak</string>
+    <string name="kondisi">Kondisi</string>
+    <string name="search">Search</string>
+    <string name="semua">Semua</string>
+    <string name="simpan">Simpan</string>
+    <string name="batal">Batal</string>
+    <string name="hapus">Hapus</string>
+    <string name="volume">Volume</string>
+    <string name="kembali">Kembali</string>
+    <string name="logo_bahan">Logo Bahan</string>
+    <string name="edit">Edit</string>
+    <string name="laboratorium">Laboratorium</string>
+    <string name="institusi">Institusi</string>
+    <string name="tidak_diketahui">Tidak diketahui</string>
+    <string name="konfirmasi_hapus">Konfirmasi Hapus</string>
+    <string name="konfirmasi_hapus_bahan">Hapus bahan %1$s? Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="nama_bahan">Nama Bahan</string>
+    <string name="pilih_tanggal">Pilih Tanggal</string>
+    <string name="pilih_kondisi">Pilih Kondisi</string>
+    <string name="kondisi_baik">Baik</string>
+    <string name="kondisi_expired">Expired</string>
+    <string name="bahan_sudah_ada">Bahan sudah ada di laboratorium ini.</string>
+    <string name="total_alat">Total Alat</string>
+    <string name="perlu_kalibrasi">Perlu Kalibrasi</string>
+    <string name="logo_alat">Logo Alat</string>
+    <string name="jumlah">Jumlah</string>
+    <string name="rusak">Rusak</string>
+    <string name="daftar_alat">Daftar Alat</string>
+    <string name="simpan_alat">Simpan Alat</string>
+
+
+
+
 
 </resources>

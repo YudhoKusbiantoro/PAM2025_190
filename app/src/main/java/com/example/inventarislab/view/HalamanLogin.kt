@@ -1,4 +1,3 @@
-// view/HalamanLogin.kt
 package com.example.inventarislab.view
 
 import android.widget.Toast
@@ -46,8 +45,6 @@ fun HalamanLogin(
             navController.navigate("home")
         }
     }
-
-    // Background putih bersih
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +56,6 @@ fun HalamanLogin(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ILLUSTRASI BESAR DI ATAS
             Image(
                 painter = painterResource(id = R.drawable.kimia2), // Ganti dengan nama gambar Anda
                 contentDescription = "Login Illustration",
@@ -88,7 +84,6 @@ fun HalamanLogin(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // CARD LOGIN - DENGAN SHADOW & PADDING
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,7 +128,6 @@ fun HalamanLogin(
                         shape = RoundedCornerShape(12.dp)
                     )
 
-                    // ERROR MESSAGE
                     if (loginResult?.status == "error") {
                         Text(
                             text = loginResult?.message.orEmpty(),
@@ -145,10 +139,8 @@ fun HalamanLogin(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // LOGIN BUTTON
                     Button(
                         onClick = {
-                            // ✅ TRIM INPUT SEBELUM VALIDASI
                             val trimmedUsername = username.trim()
                             val trimmedPassword = password.trim()
 

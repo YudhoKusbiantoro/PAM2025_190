@@ -2,7 +2,6 @@ package com.example.inventarislab.viewmodel.alat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.inventarislab.modeldata.ResponseData
 import com.example.inventarislab.repositori.RepositoryInventaris
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

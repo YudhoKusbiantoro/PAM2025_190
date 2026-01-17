@@ -1,4 +1,3 @@
-// viewmodel/RegisterViewModel.kt
 package com.example.inventarislab.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -43,7 +42,6 @@ class RegisterViewModel(
                 requestBody["lab_id"] = labId.toString()
             }
 
-            // ✅ LANGSUNG ASSIGN RESPON — TIDAK PERLU TRY-CATCH
             val response = repository.register(requestBody)
             _registerResult.value = response
         }

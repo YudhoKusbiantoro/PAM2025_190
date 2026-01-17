@@ -1,4 +1,3 @@
-// viewmodel/LoginViewModel.kt
 package com.example.inventarislab.viewmodel
 
 import androidx.lifecycle.ViewModel

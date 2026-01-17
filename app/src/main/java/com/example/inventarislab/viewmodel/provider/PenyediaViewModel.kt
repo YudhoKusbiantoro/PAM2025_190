@@ -1,4 +1,3 @@
-// viewmodel/provider/PenyediaViewModel.kt
 package com.example.inventarislab.viewmodel.provider
 
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +25,7 @@ object PenyediaViewModel {
                 aplikasiInventarisLab().container.repositoryInventaris
             )
         }
-        // ✅ ViewModel Bahan Terpisah
+        // ViewModel Bahan T
         initializer {
             BahanListViewModel(
                 aplikasiInventarisLab().container
@@ -58,7 +57,7 @@ object PenyediaViewModel {
             )
         }
 
-        // ✅ ViewModel Alat Terpisah
+        // ViewModel Alat
         initializer {
             AlatListViewModel(
                 aplikasiInventarisLab().container

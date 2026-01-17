@@ -1,4 +1,3 @@
-// view/HalamanTambahAlat.kt
 package com.example.inventarislab.view
 
 import android.app.DatePickerDialog
@@ -29,7 +28,7 @@ fun HalamanTambahAlat(
     navController: NavHostController,
     onBackClick: () -> Unit
 ) {
-    // ✅ Gunakan ViewModel terpisah
+
     val viewModel: AlatCreateViewModel = viewModel(factory = PenyediaViewModel.Factory)
 
     val createResult by viewModel.createResult.collectAsState()

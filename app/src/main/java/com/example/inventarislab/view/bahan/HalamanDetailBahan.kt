@@ -1,4 +1,3 @@
-// view/HalamanDetailBahan.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
@@ -18,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.inventarislab.R
-// ✅ Ganti import ViewModel
 import com.example.inventarislab.viewmodel.bahan.BahanDetailViewModel
 import com.example.inventarislab.viewmodel.bahan.BahanDeleteViewModel
 import com.example.inventarislab.viewmodel.provider.PenyediaViewModel
@@ -37,9 +36,10 @@ fun HalamanDetailBahan(
     navController: NavHostController,
     onBackClick: () -> Unit
 ) {
-    // ✅ Gunakan ViewModel terpisah
-    val detailViewModel: BahanDetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
-    val deleteViewModel: BahanDeleteViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    val detailViewModel: BahanDetailViewModel =
+        viewModel(factory = PenyediaViewModel.Factory)
+    val deleteViewModel: BahanDeleteViewModel =
+        viewModel(factory = PenyediaViewModel.Factory)
 
     val bahanState by detailViewModel.bahanDetail.collectAsState()
     val deleteResult by deleteViewModel.deleteResult.collectAsState()
@@ -50,7 +50,6 @@ fun HalamanDetailBahan(
         detailViewModel.loadBahanById(bahanId)
     }
 
-    // ✅ setelah delete berhasil → kembali ke list
     LaunchedEffect(deleteResult) {
         if (deleteResult != null) {
             delay(300)
@@ -64,7 +63,7 @@ fun HalamanDetailBahan(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Detail Bahan",
+                        text = stringResource(R.string.detail_bahan),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -72,7 +71,11 @@ fun HalamanDetailBahan(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = Color.White)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.kembali),
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -80,7 +83,7 @@ fun HalamanDetailBahan(
                 )
             )
         },
-        modifier = Modifier.background(Color(0xFFF5F7FA)) // Background abu-abu muda
+        modifier = Modifier.background(Color(0xFFF5F7FA))
     ) { padding ->
 
         if (bahanState == null) {
@@ -102,7 +105,6 @@ fun HalamanDetailBahan(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-                // CARD UTAMA - DETAIL BAHAN
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -113,25 +115,22 @@ fun HalamanDetailBahan(
                         modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // LOGO + NAMA + STATUS DI ATAS
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Logo
                             Image(
-                                painter = painterResource(id = R.drawable.logobahan), // Ganti jika perlu
-                                contentDescription = "Logo Bahan",
-                                modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp))
+                                painter = painterResource(id = R.drawable.logobahan),
+                                contentDescription = stringResource(R.string.logo_bahan),
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(12.dp))
                             )
 
                             Spacer(modifier = Modifier.width(16.dp))
 
-                            // Nama & Status
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = bahanState!!.nama,
                                     fontSize = 24.sp,
@@ -141,7 +140,6 @@ fun HalamanDetailBahan(
 
                                 Spacer(modifier = Modifier.height(4.dp))
 
-                                // Status Badge
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(8.dp))
@@ -173,15 +171,27 @@ fun HalamanDetailBahan(
                             color = Color(0xFFBDBDBD)
                         )
 
-                        // DETAIL INFO
-                        DetailRow(label = "Volume", value = bahanState!!.volume)
-                        DetailRow(label = "Expired", value = bahanState!!.expired)
-                        DetailRow(label = "Laboratorium", value = bahanState!!.nama_lab ?: "Tidak diketahui")
-                        DetailRow(label = "Institusi", value = bahanState!!.institusi ?: "Tidak diketahui")
+                        DetailRow(
+                            label = stringResource(R.string.volume),
+                            value = bahanState!!.volume
+                        )
+                        DetailRow(
+                            label = stringResource(R.string.expired),
+                            value = bahanState!!.expired
+                        )
+                        DetailRow(
+                            label = stringResource(R.string.laboratorium),
+                            value = bahanState!!.nama_lab
+                                ?: stringResource(R.string.tidak_diketahui)
+                        )
+                        DetailRow(
+                            label = stringResource(R.string.institusi),
+                            value = bahanState!!.institusi
+                                ?: stringResource(R.string.tidak_diketahui)
+                        )
                     }
                 }
 
-                // BUTTONS - EDIT & HAPUS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -194,9 +204,16 @@ fun HalamanDetailBahan(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit)
+                        )
                         Spacer(Modifier.width(8.dp))
-                        Text("Edit", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(
+                            text = stringResource(R.string.edit),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
 
                     Button(
@@ -205,21 +222,36 @@ fun HalamanDetailBahan(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.Delete, contentDescription = "Hapus")
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.hapus)
+                        )
                         Spacer(Modifier.width(8.dp))
-                        Text("Hapus", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(
+                            text = stringResource(R.string.hapus),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
             }
         }
     }
 
-    // DIALOG HAPUS
     if (showDeleteDialog && bahanState != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Konfirmasi Hapus") },
-            text = { Text("Hapus bahan ${bahanState!!.nama}? Tindakan ini tidak dapat dibatalkan.") },
+            title = {
+                Text(stringResource(R.string.konfirmasi_hapus))
+            },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.konfirmasi_hapus_bahan,
+                        bahanState!!.nama
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
@@ -228,19 +260,21 @@ fun HalamanDetailBahan(
                         bahanState!!.lab_id
                     )
                 }) {
-                    Text("Hapus", color = Color.Red)
+                    Text(
+                        text = stringResource(R.string.hapus),
+                        color = Color.Red
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Batal")
+                    Text(stringResource(R.string.batal))
                 }
             }
         )
     }
 }
 
-// Fungsi helper untuk menampilkan baris detail secara konsisten
 @Composable
 fun DetailRow(label: String, value: String) {
     Spacer(modifier = Modifier.height(8.dp))

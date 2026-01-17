@@ -6,7 +6,6 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
-// === INTERFACE REPOSITORY ===
 interface RepositoryInventaris {
     // Auth & Lab
     suspend fun login(username: String, password: String): ResponseData<User>

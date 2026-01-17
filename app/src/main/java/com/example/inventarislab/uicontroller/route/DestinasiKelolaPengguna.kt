@@ -1,4 +1,3 @@
-// uicontroller/route/DestinasiKelolaPengguna.kt
 package com.example.inventarislab.uicontroller.route
 
 import com.example.inventarislab.R

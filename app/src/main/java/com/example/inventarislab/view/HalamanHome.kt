@@ -1,8 +1,6 @@
-// view/HalamanHome.kt
 package com.example.inventarislab.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -45,7 +43,6 @@ fun HalamanHome(
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // === JUDUL DASHBOARD ===
             Text(
                 text = "Dashboard",
                 fontSize = 32.sp,
@@ -54,7 +51,6 @@ fun HalamanHome(
                 modifier = Modifier.padding(top = 24.dp)
             )
 
-            // === HEADER: HALLO NAMA ===
             Text(
                 text = "Hallo $userName!",
                 fontSize = 28.sp,
@@ -63,7 +59,6 @@ fun HalamanHome(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // === WELCOME CARD DENGAN ILLUSTRASI LAB ===
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,7 +110,7 @@ fun HalamanHome(
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            // === CARD BAHAN ===
+            // CARD BAHAN
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,7 +139,7 @@ fun HalamanHome(
                 }
             }
 
-            // === CARD PERALATAN ===
+            // CARD PERALATAN
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -173,7 +168,7 @@ fun HalamanHome(
                 }
             }
 
-            // === CARD KELOLA PENGGUNA (HANYA ADMIN) ===
+            // CARD KELOLA PENGGUNA (HANYA ADMIN)
             if (userRole == "admin") {
                 Card(
                     modifier = Modifier
@@ -203,8 +198,6 @@ fun HalamanHome(
                     }
                 }
             }
-
-            // === CARD LOGOUT ===
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,10 +1,8 @@
-// viewmodel/KelolaPenggunaViewModel.kt
 package com.example.inventarislab.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarislab.apiservice.ApiClient
-import com.example.inventarislab.modeldata.ResponseData
 import com.example.inventarislab.modeldata.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +22,7 @@ class KelolaPenggunaViewModel : ViewModel() {
     fun loadUsersByLabId(labId: Int) {
         viewModelScope.launch {
             try {
-                // ✅ Konversi labId ke String
+                // Konversi labId ke String
                 val response = ApiClient.apiService.getUsersByLabId(mapOf("lab_id" to labId.toString()))
                 if (response.status == "success" && response.data != null) {
                     _users.value = response.data

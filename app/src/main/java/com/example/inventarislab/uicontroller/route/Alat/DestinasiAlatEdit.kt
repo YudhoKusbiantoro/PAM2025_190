@@ -1,4 +1,3 @@
-// view/route/DestinasiAlatEdit.kt
 package com.example.inventarislab.view.route
 
 import com.example.inventarislab.R

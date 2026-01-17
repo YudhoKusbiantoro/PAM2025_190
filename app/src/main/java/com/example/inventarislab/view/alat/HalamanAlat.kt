@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,6 @@ fun HalamanAlat(
     val alat by listViewModel.alat.collectAsState()
     val notification by listViewModel.notification.collectAsState()
 
-    // ✅ Gunakan collectAsState() untuk hasil operasi
     val deleteResult by deleteViewModel.deleteResult.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
@@ -54,7 +54,6 @@ fun HalamanAlat(
         listViewModel.loadAlatByLabId(labId)
     }
 
-    // ✅ Handle hasil hapus dengan collectAsState()
     LaunchedEffect(deleteResult) {
         if (deleteResult != null) {
             listViewModel.loadAlatByLabId(labId)
@@ -68,13 +67,13 @@ fun HalamanAlat(
                 title = {
                     Column {
                         Text(
-                            text = "Daftar Alat",
+                            text = stringResource(R.string.daftar_alat),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Text(
-                            text = "Kimia Laboratorium",
+                            text = stringResource(R.string.kimia_lab),
                             fontSize = 16.sp,
                             color = Color(0xFFBDBDBD)
                         )
@@ -121,7 +120,7 @@ fun HalamanAlat(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Notifikasi",
+                        text = stringResource(R.string.notifikasi),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = Color.Gray
